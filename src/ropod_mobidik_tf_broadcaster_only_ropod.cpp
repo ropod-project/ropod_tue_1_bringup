@@ -143,7 +143,7 @@ void loadvelcmdCallback(const geometry_msgs::Twist::ConstPtr& msg){
   {
       sc_factor = std::abs(min_magn_theta_vel/ropod_cmd_vel.angular.z);
       ropod_cmd_vel.angular.z *= sc_factor;
-  }  
+  }
     
   pub_robcmdvel.publish(ropod_cmd_vel);
 }
@@ -168,7 +168,7 @@ int main(int argc, char** argv){
   tf::Quaternion q;
   q.setRPY(0, 0, 0);
   
-  base2loadTF = tf::Transform(q, tf::Vector3(-1.045, 0.0, 0.0));
+  base2loadTF = tf::Transform(q, tf::Vector3(0.0, 0.0, 0.0));
   
 
 
