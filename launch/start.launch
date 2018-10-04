@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <launch>
 	<!-- Configurable Parameters -->
-	<arg name="robotName" default="ropod"/>   
+	<arg name="robotName" default="ropod_tue_1"/>   
+	<arg name="robotCommonName" default="ropod"/>   
 	<arg name="loadName" default="mobidik"/>   
 	<arg name="LOAD_ATTACHED" default="false" />	
 	<arg name="laser" default="true"/>
@@ -14,14 +15,14 @@
 <!-- 	<arg name="floorplan" default="$(find ed_object_models)/models/hospital_test_amcl/walls/shape/Floorplan_demo_ROPOD_amcl"/> -->
         <arg name="floorplan" default="$(find ed_object_models)/models/tue_hallway_RLtoAL/walls/shape/map"/>
 	<arg name="ROBOT_REAL" default="$(optenv ROBOT_REAL)" />
-	<arg name="robot_path" default="$(env CATKIN_WORKSPACE)/src/platform/$(arg robotName)"/>
+	<arg name="robot_path" default="$(env CATKIN_WORKSPACE)/src/platform"/>
 	<arg name="robot_bringup_path" default="$(arg robot_path)/$(arg robotName)_bringup"/>
 
 	<group ns="$(arg robotName)">
 		<!-- Start gmapping if required-->
 		<group if="$(arg gmapping)">
 			  <include file="$(find robot_common)/launch/localization/gmapping.launch">
-				<arg name="robot" value="$(arg robotName)" />
+				<arg name="robot" value="$(arg robotCommonName)" />
 				<arg name="sensor" value="$(arg laser1_name)"/>
 			</include>
 		</group>
@@ -59,15 +60,15 @@
 	
 			<!-- dynamic tf broadcaster -->	
 			<group unless="$(arg LOAD_ATTACHED)">
-			    <node pkg="ropod_bringup" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" />			    
+			    <node pkg="$(arg robotName)_bringup" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" />			    
 			</group> 
 			<group if="$(arg LOAD_ATTACHED)">
-			    <node pkg="ropod_bringup" type="ropod_mobidik_tf_broadcaster" name="ropod_mobidik_tf_broadcaster" />
+			    <node pkg="$(arg robotName)_bringup" type="ropod_mobidik_tf_broadcaster" name="ropod_mobidik_tf_broadcaster" />
 			</group>
 			
 			<!-- Specify static transforms -->
 			<include file="$(arg robot_bringup_path)/parameters/hardware/static_tf.launch">
-				<arg name="robot" value="$(arg robotName)" />
+				<arg name="robot" value="$(arg robotCommonName)" />
 				<arg name="laser1" value="$(arg laser1_name)"/>
 			</include> 			
 
@@ -76,12 +77,12 @@
                                 <include file="$(find robot_common)/launch/hardware/hokuyo_laser.launch">
                                         <arg name="bringup_path" value="$(arg robot_bringup_path)"/>
                                         <arg name="name" value="$(arg laser1_name)"/>
-                                        <arg name="robot" value="$(arg robotName)"/>
+                                        <arg name="robot" value="$(arg robotCommonName)"/>
                                 </include>
 <!--                                <include file="$(find robot_common)/launch/hardware/sick_laser.launch">
                                         <arg name="bringup_path" value="$(arg robot_bringup_path)"/>
                                         <arg name="name" value="sick_laser"/>
-                                        <arg name="robot" value="$(arg robotName)"/>
+                                        <arg name="robot" value="$(arg robotCommonName)"/>
                                 </include>
 -->
                         </group>
@@ -92,45 +93,51 @@
 
 	<group unless="$(arg ROBOT_REAL)">
 	<!-- SIMULATION -->  
-	
+   
 	        <group unless="$(arg LOAD_ATTACHED)">	  
 			<include file="$(find robot_common)/launch/simulator/gazebo_simulator.launch" >
-				<arg name="robot" value="$(arg robotName)" />
-				<arg name="model_name" value="$(arg robotName)" />
-				<arg name="model_path" value="$(arg robot_path)/$(arg robotName)_model" />
+                <arg name="robot" value="$(arg robotCommonName)" />
+
+                <!--				<arg name="model_name" value="$(arg robotName)" /> -->
+                <arg name="model_name" value="$(arg robotCommonName)" /> 
+				<arg name="model_path" value="$(arg robot_path)/$(arg robotCommonName)_sim_model" />
 			</include>
-	
+   
 			<!-- Launch tf broadcaster for ropod robot -->
-			<node pkg="ropod_bringup" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" />
+           		<node pkg="$(arg robotName)_bringup" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" />
 
 		</group>
-		
+       
+
 		<group if="$(arg LOAD_ATTACHED)">
 		
 			<include file="$(find robot_common)/launch/simulator/gazebo_simulator.launch" >
-				<arg name="robot" value="$(arg robotName)" />
-				<arg name="model_name" value="$(arg robotName)_$(arg loadName)" />				
-				<arg name="model_path" value="$(arg robot_path)/$(arg robotName)_model" />
+				<arg name="robot" value="$(arg robotCommonName)" />
+				<arg name="model_name" value="$(arg robotCommonName)_$(arg loadName)" />				
+				<arg name="model_path" value="$(arg robot_path)/$(arg robotCommonName)_model" />
 			</include>
-	
-			<!-- Launch tf broadcaster for ropod robot -->
-			<node pkg="ropod_bringup" type="ropod_mobidik_tf_broadcaster_simulator" name="ropod_mobidik_tf_broadcaster_simulator" />
+ 
+       <!-- Launch tf broadcaster for ropod robot -->
+        <node pkg="$(arg roboName)_bringup" type="ropod_mobidik_tf_broadcaster_simulator" name="ropod_mobidik_tf_broadcaster_simulator" />
 		
 		</group>
-		
+        
 		<!-- Specify static transforms -->
-		<include file="$(arg robot_bringup_path)/parameters/hardware/static_tf.launch">
-			<arg name="robot" value="$(arg robotName)" />
+        <include file="$(arg robot_bringup_path)/parameters/hardware/static_tf.launch">
+			<arg name="robot" value="$(arg robotCommonName)" />
 			<arg name="laser1" value="$(arg laser1_name)"/>
 		</include> 
-		
+        
 		<!-- Add floorplan. -->
-		<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
+       	<node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" 
 			args="-file $(arg floorplan).urdf -urdf -z 1 -model floorplan -x -4.9 -y 9.8 -z 0 -Y -1.54" 
-		/>	
+        />	
+
 		<!-- Launch RVIZ -->
-		<include file="$(arg robot_bringup_path)/launch/tools/rviz.launch"/>
-		
+        <include file="$(arg robot_bringup_path)/launch/tools/rviz.launch">
+            <arg name="robot_bringup" value="$(arg robot_bringup_path)"/>
+    </include>
+
 	</group>
 
 </launch>
