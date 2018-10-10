@@ -99,7 +99,6 @@
                                 <arg name="robot" value="$(arg robotCommonName)" />
                                 <arg name="model_name" value="$(arg robotCommonName)" /> 
 				<arg name="model_path" value="$(arg robot_path)/$(arg robotCommonName)_sim_model" />
-				<arg name="model_path" value="$(arg robot_path)/$(arg robotName)_model" />
                                 <arg name="movingObjects" value="true" />
 			</include>
    
