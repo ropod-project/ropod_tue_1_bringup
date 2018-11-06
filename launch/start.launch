@@ -76,6 +76,7 @@
 			<!-- Specify static transforms -->
 			<include file="$(arg robot_bringup_path)/parameters/hardware/static_tf.launch">
 				<arg name="robot" value="$(arg robotCommonName)" />
+				<!--<arg name="robot" value="$(arg robotName)" />-->
 				<arg name="laser1" value="$(arg laser1_name)"/>
 			</include> 			
 
@@ -106,8 +107,8 @@
 			<include file="$(find ropod_sim_model)/launch/simulator/gazebo_simulator.launch" >
                 <arg name="robot" value="$(arg robotCommonName)" />
 
-                <!--				<arg name="model_name" value="$(arg robotName)" /> -->
-                <arg name="model_name" value="$(arg robotCommonName)" /> 
+                <arg name="model_name" value="$(arg robotName)" /> 
+<!--                <arg name="model_name" value="$(arg robotCommonName)" /> --> 
 				<arg name="model_path" value="$(arg robot_path)/$(arg robotCommonName)_sim_model" />
 			</include>
    
