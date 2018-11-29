@@ -12,8 +12,8 @@
 	<arg name="asus_cam_calibration" default="false"/>
 	<arg name="gmapping" default="false"/>
 	<!--<arg name="floorplan" default="$(find ropod_demo_dec_2017)/config/shape/floorplan_ropod_demo"/>-->
-<!-- 	<arg name="floorplan" default="$(find ed_object_models)/models/hospital_test_amcl/walls/shape/Floorplan_demo_ROPOD_amcl"/> -->
-        <arg name="floorplan" default="$(find ed_object_models)/models/tue_hallway_RLtoAL/walls/shape/map"/>
+ 	<arg name="floorplan" default="$(find ed_object_models)/models/hospital_test_amcl/walls/shape/Floorplan_demo_ROPOD_amcl"/>
+<!--        <arg name="floorplan" default="$(find ed_object_models)/models/tue_hallway_RLtoAL/walls/shape/map"/> -->
 	<arg name="ROBOT_REAL" default="$(optenv ROBOT_REAL)" />
 	<arg name="robot_path" default="$(env CATKIN_WORKSPACE)/src/platform"/>
 	<arg name="robot_bringup_path" default="$(arg robot_path)/$(arg robotName)_bringup"/>
@@ -47,6 +47,9 @@
                        <node pkg="ropod_4wheel_tdistzmpc_cntr" type="ropod_4wheel_tdistzmpc_cntr_node" name="ropod_4wheel_tdistzmpc_cntr_node" output="screen">
                           <remap from="/cmd_vel" to="/$(arg robotName)/cmd_vel"/>
                           <remap from="/odom_incomplete" to="/$(arg robotName)/odom_incomplete"/>
+       		          <remap from="/ropod/LLCmode_Applied" to="/$(arg robotName)/LLCmode_Applied"/>
+                 	  <remap from="/ropod/Set_LLCmode" to="/$(arg robotName)/Set_LLCmode"/>
+			  <remap from="/ropod/load_attached_Applied" to="/$(arg robotName)/load_attached_Applied"/>
                           <param name="/platform_dtheta_cntr/Kgain" value="200" />
                           <param name="/platform_dxdy_cntr/Kgain" value="250" />
                           <param name="/platform_dxdy_cntr/I_fhz" value="0.25" />
@@ -60,7 +63,11 @@
 	
 			<!-- dynamic tf broadcaster -->	
 			<group unless="$(arg LOAD_ATTACHED)">
-			    <node pkg="$(arg robotName)_bringup" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" />			    
+			    <node pkg="$(arg robotName)_bringup" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" >
+				<remap from="/ropod/cmd_vel" to="/$(arg robotName)/cmd_vel"/>
+				<remap from="/ropod/odom" to="/$(arg robotName)/odom"/>
+				<remap from="/ropod/odom_incomplete" to="/$(arg robotName)/odom_incomplete"/>
+			</node>			    
 			</group> 
 			<group if="$(arg LOAD_ATTACHED)">
 			    <node pkg="$(arg robotName)_bringup" type="ropod_mobidik_tf_broadcaster" name="ropod_mobidik_tf_broadcaster" />
@@ -69,22 +76,24 @@
 			<!-- Specify static transforms -->
 			<include file="$(arg robot_bringup_path)/parameters/hardware/static_tf.launch">
 				<arg name="robot" value="$(arg robotCommonName)" />
+				<!--<arg name="robot" value="$(arg robotName)" />-->
 				<arg name="laser1" value="$(arg laser1_name)"/>
 			</include> 			
 
                         <!-- Laser publishing -->
                         <group if="$(arg laser)">
-                                <include file="$(find robot_common)/launch/hardware/hokuyo_laser.launch">
+<!--                                <include file="$(find robot_common)/launch/hardware/hokuyo_laser.launch">
                                         <arg name="bringup_path" value="$(arg robot_bringup_path)"/>
                                         <arg name="name" value="$(arg laser1_name)"/>
                                         <arg name="robot" value="$(arg robotCommonName)"/>
                                 </include>
-<!--                                <include file="$(find robot_common)/launch/hardware/sick_laser.launch">
+-->
+                                <include file="$(find robot_common)/launch/hardware/sick_laser.launch">
                                         <arg name="bringup_path" value="$(arg robot_bringup_path)"/>
-                                        <arg name="name" value="sick_laser"/>
+                                        <arg name="name" value="$(arg laser1_name)"/>
                                         <arg name="robot" value="$(arg robotCommonName)"/>
                                 </include>
--->
+
                         </group>
 
 
@@ -98,6 +107,11 @@
 			<include file="$(find robot_common)/launch/simulator/gazebo_simulator.launch" >
                                 <arg name="robot" value="$(arg robotCommonName)" />
                                 <arg name="model_name" value="$(arg robotCommonName)" /> 
+			<include file="$(find ropod_sim_model)/launch/simulator/gazebo_simulator.launch" >
+                <arg name="robot" value="$(arg robotCommonName)" />
+
+                <arg name="model_name" value="$(arg robotName)" /> 
+                <arg name="model_name" value="$(arg robotCommonName)" />
 				<arg name="model_path" value="$(arg robot_path)/$(arg robotCommonName)_sim_model" />
                                 <arg name="movingObjects" value="true" />
 			</include>
@@ -110,7 +124,7 @@
 
 		<group if="$(arg LOAD_ATTACHED)">
 		
-			<include file="$(find robot_common)/launch/simulator/gazebo_simulator.launch" >
+			<include file="$(find ropod_sim_model)/launch/simulator/gazebo_simulator.launch" >
 				<arg name="robot" value="$(arg robotCommonName)" />
 				<arg name="model_name" value="$(arg robotCommonName)_$(arg loadName)" />				
 				<arg name="model_path" value="$(arg robot_path)/$(arg robotCommonName)_model" />

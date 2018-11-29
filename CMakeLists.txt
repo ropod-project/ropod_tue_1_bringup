@@ -4,6 +4,7 @@ project(ropod_tue_1_bringup)
 find_package(catkin REQUIRED COMPONENTS
     message_generation
     geometry_msgs
+    tf2_geometry_msgs
     nav_msgs
     roscpp
     tf
