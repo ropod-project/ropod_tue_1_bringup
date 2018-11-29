@@ -104,17 +104,12 @@
 	<!-- SIMULATION -->  
    
 	        <group unless="$(arg LOAD_ATTACHED)">	  
-			<include file="$(find robot_common)/launch/simulator/gazebo_simulator.launch" >
-                                <arg name="robot" value="$(arg robotCommonName)" />
-                                <arg name="model_name" value="$(arg robotCommonName)" /> 
 			<include file="$(find ropod_sim_model)/launch/simulator/gazebo_simulator.launch" >
-                <arg name="robot" value="$(arg robotCommonName)" />
-
-                <arg name="model_name" value="$(arg robotName)" /> 
-                <arg name="model_name" value="$(arg robotCommonName)" />
-				<arg name="model_path" value="$(arg robot_path)/$(arg robotCommonName)_sim_model" />
+                                <arg name="robot" value="$(arg robotCommonName)" />
+                                <arg name="model_name" value="$(arg robotCommonName)_$(arg loadName)" />                                
+                                <arg name="model_path" value="$(arg robot_path)/$(arg robotCommonName)_sim_model" />
                                 <arg name="movingObjects" value="true" />
-			</include>
+                        </include>
    
 			<!-- Launch tf broadcaster for ropod robot -->
            		<node pkg="$(arg robotName)_bringup" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" />
@@ -130,8 +125,8 @@
 				<arg name="model_path" value="$(arg robot_path)/$(arg robotCommonName)_model" />
 			</include>
  
-       <!-- Launch tf broadcaster for ropod robot -->
-        <node pkg="$(arg roboName)_bringup" type="ropod_mobidik_tf_broadcaster_simulator" name="ropod_mobidik_tf_broadcaster_simulator" />
+                        <!-- Launch tf broadcaster for ropod robot -->
+                        <node pkg="$(arg roboName)_bringup" type="ropod_mobidik_tf_broadcaster_simulator" name="ropod_mobidik_tf_broadcaster_simulator" />
 		
 		</group>
         
