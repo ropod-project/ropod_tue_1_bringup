@@ -18,6 +18,8 @@ ros::Publisher pub_loadodom;
 ros::Publisher pub_ropod_odom;
 tf::Transform base2loadTF;
 
+std::basic_string<char> robotName = "ropod_tue_1";
+
 // /* 
 void poseCallback(const nav_msgs::Odometry::ConstPtr& msg){	
   odommsg.pose.pose.position.x = msg->pose.pose.position.x;
@@ -32,8 +34,8 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& msg){
   odommsg.twist.twist.angular.x = msg->twist.twist.angular.x;
   odommsg.twist.twist.angular.y = msg->twist.twist.angular.y;
   odommsg.twist.twist.angular.z = msg->twist.twist.angular.z;     
-  odommsg.header.frame_id = "/ropod/odom";
-  odommsg.child_frame_id = "/ropod/base_link";
+  odommsg.header.frame_id = "/" + robotName + "/odom";
+  odommsg.child_frame_id = "/" + robotName + "/base_link";
   odommsg.header.stamp = ros::Time::now();
   pub_ropod_odom.publish(odommsg);     
   
@@ -152,7 +154,7 @@ int main(int argc, char** argv){
   odommsg.pose.pose.orientation.x = 0.0;
   odommsg.pose.pose.orientation.y = 0.0;
   odommsg.pose.pose.orientation.z = 0.0;
-  odommsg.pose.pose.orientation.w = 0.0;
+  odommsg.pose.pose.orientation.w = 1.0;
 
   ros::Rate r(30);
 
@@ -168,10 +170,10 @@ int main(int argc, char** argv){
 
 
   
-   pub_robcmdvel = n.advertise<geometry_msgs::Twist>("/ropod/cmd_vel", 1);
+   pub_robcmdvel = n.advertise<geometry_msgs::Twist>("/" + robotName + "/cmd_vel", 1);
    pub_loadodom = n.advertise<nav_msgs::Odometry>("/load/odom", 1);
-   pub_ropod_odom = n.advertise<nav_msgs::Odometry>("/ropod/odom", 1);
-   ros::Subscriber sub_odom = n.subscribe<nav_msgs::Odometry>("/ropod/odom_incomplete", 1, poseCallback);  
+   pub_ropod_odom = n.advertise<nav_msgs::Odometry>("/" + robotName + "/odom", 1);
+   ros::Subscriber sub_odom = n.subscribe<nav_msgs::Odometry>("/" + robotName + "/odom_incomplete", 1, poseCallback);  
    ros::Subscriber sub_loadcmdvel = n.subscribe<geometry_msgs::Twist>("/load/cmd_vel", 1, loadvelcmdCallback);
    
    ros::Subscriber load_attached_sub = n.subscribe<std_msgs::Bool>("/route_navigation/set_load_attached", 10, loadAttachedCallback);   
@@ -187,7 +189,7 @@ int main(int argc, char** argv){
     
     /* In the future  this transformation needs to be adjusted based on an estimation of the real kinematics constraints*/    
    broadcaster.sendTransform(
-      tf::StampedTransform(base2loadTF, ros::Time::now(),"/ropod/base_link", "/load/base_link"));
+      tf::StampedTransform(base2loadTF, ros::Time::now(),"/" + robotName + "/base_link", "/load/base_link"));
    
         
     /* odometry transform */
@@ -195,7 +197,7 @@ int main(int argc, char** argv){
       tf::StampedTransform(
         tf::Transform(tf::Quaternion(odommsg.pose.pose.orientation.x, odommsg.pose.pose.orientation.y, odommsg.pose.pose.orientation.z, odommsg.pose.pose.orientation.w), 
 		      tf::Vector3(odommsg.pose.pose.position.x, odommsg.pose.pose.position.y, 0.0)),
-        ros::Time::now(),"/ropod/odom","/ropod/base_link"));      
+        ros::Time::now(),"/" + robotName + "/odom","/" + robotName + "/base_link"));      
     
     
     /* Send transform for "ideal" localization in simulation*/
