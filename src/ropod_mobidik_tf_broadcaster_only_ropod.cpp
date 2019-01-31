@@ -20,7 +20,7 @@ tf::Transform base2loadTF;
 
 //std::basic_string<char> robotName = "ropod_tue_1";
 std::basic_string<char> robotName = "ropod";
-
+int ID = 0;
 // /* 
 void poseCallback(const nav_msgs::Odometry::ConstPtr& msg){	
   odommsg.pose.pose.position.x = msg->pose.pose.position.x;
@@ -38,6 +38,7 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& msg){
   odommsg.header.frame_id = "/" + robotName + "/odom";
   odommsg.child_frame_id = "/" + robotName + "/base_link";
   odommsg.header.stamp = ros::Time::now();
+  odommsg.header.seq = ID;
   pub_ropod_odom.publish(odommsg);     
    
   // Compute load odometry using ropod odometry
@@ -65,7 +66,10 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& msg){
   loadodommsg.header.frame_id = "/load/odom";
   loadodommsg.child_frame_id = "/load/base_link";
   loadodommsg.header.stamp = ros::Time::now();
+  loadodommsg.header.seq = ID;
   pub_loadodom.publish(loadodommsg);
+
+  ID++;
   
 }
 
