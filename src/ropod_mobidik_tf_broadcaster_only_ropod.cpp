@@ -23,7 +23,7 @@ std::basic_string<char> robotName = "ropod";
 
 // /* 
 void poseCallback(const nav_msgs::Odometry::ConstPtr& msg){	
-/*  odommsg.pose.pose.position.x = msg->pose.pose.position.x;
+  odommsg.pose.pose.position.x = msg->pose.pose.position.x;
   odommsg.pose.pose.position.y = msg->pose.pose.position.y;
   odommsg.pose.pose.orientation.x = msg->pose.pose.orientation.x;
   odommsg.pose.pose.orientation.y = msg->pose.pose.orientation.y;
@@ -39,10 +39,7 @@ void poseCallback(const nav_msgs::Odometry::ConstPtr& msg){
   odommsg.child_frame_id = "/" + robotName + "/base_link";
   odommsg.header.stamp = ros::Time::now();
   pub_ropod_odom.publish(odommsg);     
-  */
-  
-  
-  
+   
   // Compute load odometry using ropod odometry
   tf::Vector3 loadShift = base2loadTF.getOrigin();
   double rx, ry, rz;
@@ -173,10 +170,9 @@ int main(int argc, char** argv){
   
    pub_robcmdvel = n.advertise<geometry_msgs::Twist>("/" + robotName + "/cmd_vel", 1);
    pub_loadodom = n.advertise<nav_msgs::Odometry>("/load/odom", 1);
-//   pub_ropod_odom = n.advertise<nav_msgs::Odometry>("/" + robotName + "/odom", 1);
-   ros::Subscriber sub_odom = n.subscribe<nav_msgs::Odometry>("/" + robotName + "/odom", 1, poseCallback);  
+   pub_ropod_odom = n.advertise<nav_msgs::Odometry>("/" + robotName + "/odom", 1);
+   ros::Subscriber sub_odom = n.subscribe<nav_msgs::Odometry>("/" + robotName + "/odom_incomplete", 1, poseCallback);  
    ros::Subscriber sub_loadcmdvel = n.subscribe<geometry_msgs::Twist>("/load/cmd_vel", 1, loadvelcmdCallback);
-   
    ros::Subscriber load_attached_sub = n.subscribe<std_msgs::Bool>("/route_navigation/set_load_attached", 10, loadAttachedCallback);   
    
   //ros::Subscriber sub = n.subscribe<geometry_msgs::PoseArray>("/ed/localization/particles", 1, poseCallback);

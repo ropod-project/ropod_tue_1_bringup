@@ -20,7 +20,8 @@
 	<arg name="robot_path" default="$(env CATKIN_WORKSPACE)/src/platform"/>
 
 <!--	<arg name="robot_bringup_path" default="$(arg robot_path)/$(arg robotName)"/>-->
-	<arg name="robot_bringup_path" default="$(arg robot_path)/ropod_tue_1_bringup"/>
+        <arg name="robotPackage" default="ropod_tue_1_bringup"/>
+	<arg name="robot_bringup_path" default="$(arg robot_path)/$(arg robotPackage)"/>
 
 	<group ns="$(arg robotName)">
 		<!-- Start gmapping if required-->
@@ -73,7 +74,7 @@
 			<!-- dynamic tf broadcaster -->	
 			<group unless="$(arg LOAD_ATTACHED)">
 			   <!-- <node pkg="$(arg robotName)_bringup" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" >-->
-			    <node pkg="$(arg robotName)_tue_1_bringup" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" >
+			    <node pkg="$(arg robot_bringup_path)" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" >
 				<remap from="/ropod/cmd_vel" to="/$(arg robotName)/cmd_vel"/>
 				<remap from="/ropod/odom" to="/$(arg robotName)/odom"/>
 <!--				<remap from="/ropod/odom_incomplete" to="/$(arg robotName)/odom_incomplete"/>-->
@@ -123,7 +124,7 @@
                         </include>
    
 			<!-- Launch tf broadcaster for ropod robot -->
-           		<node pkg="$(arg robotName)_bringup" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" />
+           		<node pkg="$(arg robotPackage)" type="ropod_mobidik_tf_broadcaster_only_ropod" name="ropod_mobidik_tf_broadcaster_only_ropod" />
 
 		</group>
        
@@ -137,7 +138,7 @@
 			</include>
  
                         <!-- Launch tf broadcaster for ropod robot -->
-                        <node pkg="$(arg roboName)_bringup" type="ropod_mobidik_tf_broadcaster_simulator" name="ropod_mobidik_tf_broadcaster_simulator" />
+                        <node pkg="$(arg robotPackage)" type="ropod_mobidik_tf_broadcaster_simulator" name="ropod_mobidik_tf_broadcaster_simulator" />
 		
 		</group>
         
