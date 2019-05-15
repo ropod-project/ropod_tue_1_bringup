@@ -13,9 +13,13 @@
 	<arg name="asus_cam_name" value="asusxtion"/>
 	<arg name="asus_cam_calibration" default="false"/>
 	<arg name="gmapping" default="false"/>
-	<!--<arg name="floorplan" default="$(find ropod_demo_dec_2017)/config/shape/floorplan_ropod_demo"/>-->
-        <!-- <arg name="floorplan" default="$(find ed_object_models)/models/hospital_test_amcl/walls/shape/Floorplan_demo_ROPOD_amcl"/> -->
-        <arg name="floorplan" default="$(find ed_object_models)/models/tue_hallway_RLtoAL/walls/shape/map"/> 
+        <arg name="gui" default="true"/>
+
+	<!--	<arg name="floorplan" default="$(find ropod_demo_dec_2017)/config/shape/floorplan_ropod_demo"/>-->
+	<!-- 	<arg name="floorplan" default="$(find ed_object_models)/models/hospital_test_amcl/walls/shape/Floorplan_demo_ROPOD_amcl"/> -->
+	<!--    <arg name="floorplan" default="$(find ed_object_models)/models/tue_hallway_RLtoAL/walls/shape/map"/> -->
+	<arg name="floorplan" default="/home/cesar/ropod-project-software/catkin_workspace/src/applications/occupancy_grids/brsu/brsu-c-floor0_osm/map"/>
+
 	<arg name="ROBOT_REAL" default="$(optenv ROBOT_REAL)" />
 	<arg name="robot_path" default="$(env CATKIN_WORKSPACE)/src/platform"/>
 
@@ -28,7 +32,7 @@
 		<group if="$(arg gmapping)">
 			  <include file="$(find robot_common)/launch/localization/gmapping.launch">
 				<arg name="robot" value="$(arg robotCommonName)" />
-				<arg name="sensor" value="$(arg laser1_name)"/>
+				<arg name="sensor" value="$(arg laser1_name)"/>                                
 			</include>
 		</group>
 		
@@ -120,7 +124,8 @@
                                 <arg name="robot" value="$(arg robotCommonName)" />
                                 <arg name="model_name" value="$(arg robotCommonName)_$(arg loadName)" />                                
                                 <arg name="model_path" value="$(arg robot_path)/$(arg robotCommonName)_sim_model" />
-                                <arg name="movingObjects" value="true" />
+                                <arg name="movingObjects" value="false" />
+                                <arg name="gui" value="$(arg gui)"/>
                         </include>
    
 			<!-- Launch tf broadcaster for ropod robot -->
